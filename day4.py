@@ -1,53 +1,24 @@
-def check1(s, colons):
-    req_fields = {'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'}
-    fields = set(s[c - 3:c] for c in colons)
-    if 'cid' in fields:
-        fields.remove('cid')
-    return fields == req_fields
+import re
 
 
-def p1(l):
-    ans = 0
-    for s in l:
-        colons = [i for i, letter in enumerate(s) if letter == ":"]
-        ans += check1(s, colons)
-    return ans
-
-
-def check2(s, colons):
-    valid = True
-    for c in colons:
-        field = s[c - 3:c]
-        try:
-            if field == 'byr':
-                valid = (1920 <= int(s[c:c + 4]) <= 2002)
-            elif field == 'iyr':
-                valid = (2010 <= int(s[c:c + 4]) <= 2020)
-            elif field == 'eyr':
-                valid = (2020 <= int(s[c:c + 4]) <= 2030)
-            elif field == 'hgt':
-                valid = False  # change
-            elif field == 'hcl':
-                valid = False  # change
-            elif field == 'ecl':
-                ecl_valid = {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}
-                valid = (s[c:c + 3] in ecl_valid)
-        except:
-            valid = False
-        else:
-            valid = True
-    return valid
-
-
-def p2(l):
-    ans = 0
-    req_fields = {'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'}
-    for s in l:
-        colons = [i for i, letter in enumerate(s) if letter == ":"]
-        ans += check2(s, colons)
-    return ans
+CHECK = {
+    "byr": lambda x: 1920 <= int(x) <= 2002,
+    "iyr": lambda x: 2010 <= int(x) <= 2020,
+    "eyr": lambda x: 2020 <= int(x) <= 2030,
+    "hgt": lambda x: ("cm" in x and (150 <= int(x.replace("cm", "")) <= 193)) or
+                     ("in" in x and (59 <= int(x.replace("in", "")) <= 76)),
+    "hcl": lambda x: re.match(r"#[0-9a-f]{6}", x),
+    "ecl": lambda x: x in ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"],
+    "pid": lambda x: len(x) == 9 and x.isnumeric()
+}
 
 
 with open("inputs/day4.txt") as f:
     a = [x.replace('\n', ' ').strip() for x in f.read().split("\n\n")]
-    print(p1(a))
+    p1 = p2 = 0
+    for s in a:
+        passport = {field.split(':')[0]: field.split(':')[1] for field in s.split()}
+        p1 += all(key in passport for key in CHECK)
+        p2 += all(key in passport and func(passport.get(key)) for key, func in CHECK.items())
+    print(p1)
+    print(p2)
