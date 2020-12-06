@@ -1,10 +1,8 @@
 def binary(bsp, l, r):
     if l == r:
         return l
-    if bsp[0] == 'F' or bsp[0] == 'L':
-        return binary(bsp[1:], l, r - (r - l) // 2 - 1)
-    else:
-        return binary(bsp[1:], l + (r - l) // 2 + 1, r)
+    return binary(bsp[1:], l, r - (r - l) // 2 - 1) if bsp[0] == 'F' or bsp[0] == 'L' \
+        else binary(bsp[1:], l + (r - l) // 2 + 1, r)
 
 
 with open("inputs/day5.txt") as f:
