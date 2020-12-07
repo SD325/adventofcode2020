@@ -14,12 +14,9 @@ def p1(ins, col):
 
 
 def p2(contains, col):
-    ret = 0
     if col not in contains:
         return 0
-    for c, v in contains[col]:
-        ret += v + v * p2(contains, c)
-    return ret
+    return sum(v + v * p2(contains, c) for c, v in contains[col])
 
 
 with open("inputs/day7.txt") as f:
