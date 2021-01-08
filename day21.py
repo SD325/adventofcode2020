@@ -1,7 +1,7 @@
 with open("inputs/day21.txt") as f:
     all_ingredients, alg_ing = [], {}
-    for l in f.readlines():
-        ing, alg = l.strip()[:-1].split(' (contains ')
+    for line in f.readlines():
+        ing, alg = line.strip()[:-1].split(' (contains ')
         ingredients, allergens = set(ing.split()), alg.split(', ') if ',' in alg else [alg]
         all_ingredients += ingredients
         for aa in allergens:
